@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+
+# Angular build output
+dist/
+.angular/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+
+# VS Code local settings
+.vscode/

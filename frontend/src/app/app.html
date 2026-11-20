@@ -1,0 +1,533 @@
+<div class="page">
+
+  <header class="header">
+    <div class="logo">₹</div>
+
+    <div>
+      <h1>AI Loan Advisor</h1>
+      <p>Responsible AI-powered lending guidance</p>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="intro">
+      <span class="eyebrow">SMART LENDING ASSISTANT</span>
+
+      <h2>Find a loan that fits your financial profile</h2>
+
+      <p>
+        Tell us about your borrowing requirement. We'll evaluate our
+        mock lending products, calculate repayment costs and provide
+        a grounded AI explanation.
+      </p>
+    </section>
+
+    <div class="grid">
+
+      <!-- LEFT SIDE: LOAN FORM -->
+
+      <section class="card form-card">
+
+        <div class="card-title">
+
+          <div>
+            <h3>Your financial requirement</h3>
+            <p>Enter your borrowing preferences below.</p>
+          </div>
+
+          <span class="secure-badge">
+            ● Secure
+          </span>
+
+        </div>
+
+        <form
+          [formGroup]="loanForm"
+          (ngSubmit)="submit()"
+        >
+
+          <!-- LOAN AMOUNT -->
+
+          <div class="field">
+
+            <label for="loanAmount">
+              Loan amount
+            </label>
+
+            <div class="money-input">
+
+              <span>₹</span>
+
+              <input
+                id="loanAmount"
+                type="number"
+                formControlName="loanAmount"
+              >
+
+            </div>
+
+          </div>
+
+          <!-- PURPOSE -->
+
+          <div class="field">
+
+            <label for="purpose">
+              Loan purpose
+            </label>
+
+            <select
+              id="purpose"
+              formControlName="purpose"
+            >
+
+              <option value="HOME_RENOVATION">
+                Home renovation
+              </option>
+
+              <option value="MEDICAL">
+                Medical
+              </option>
+
+              <option value="EDUCATION">
+                Education
+              </option>
+
+              <option value="TRAVEL">
+                Travel
+              </option>
+
+              <option value="BUSINESS">
+                Business
+              </option>
+
+              <option value="PURCHASE">
+                Purchase
+              </option>
+
+              <option value="EMERGENCY">
+                Emergency
+              </option>
+
+              <option value="OTHER">
+                Other
+              </option>
+
+            </select>
+
+          </div>
+
+          <!-- INCOME + EXISTING EMI -->
+
+          <div class="row">
+
+            <div class="field">
+
+              <label for="monthlyIncome">
+                Monthly income
+              </label>
+
+              <div class="money-input">
+
+                <span>₹</span>
+
+                <input
+                  id="monthlyIncome"
+                  type="number"
+                  formControlName="monthlyIncome"
+                >
+
+              </div>
+
+            </div>
+
+            <div class="field">
+
+              <label for="existingEMI">
+                Existing EMI
+              </label>
+
+              <div class="money-input">
+
+                <span>₹</span>
+
+                <input
+                  id="existingEMI"
+                  type="number"
+                  formControlName="existingEMI"
+                >
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- TENURE + EMPLOYMENT -->
+
+          <div class="row">
+
+            <div class="field">
+
+              <label for="preferredTenure">
+                Preferred tenure
+              </label>
+
+              <select
+                id="preferredTenure"
+                formControlName="preferredTenure"
+              >
+
+                <option [ngValue]="6">
+                  6 months
+                </option>
+
+                <option [ngValue]="12">
+                  12 months
+                </option>
+
+                <option [ngValue]="24">
+                  24 months
+                </option>
+
+                <option [ngValue]="36">
+                  36 months
+                </option>
+
+                <option [ngValue]="48">
+                  48 months
+                </option>
+
+                <option [ngValue]="60">
+                  60 months
+                </option>
+
+              </select>
+
+            </div>
+
+            <div class="field">
+
+              <label for="employmentType">
+                Employment
+              </label>
+
+              <select
+                id="employmentType"
+                formControlName="employmentType"
+              >
+
+                <option value="SALARIED">
+                  Salaried
+                </option>
+
+                <option value="SELF_EMPLOYED">
+                  Self-employed
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+          <!-- RISK PROFILE -->
+
+          <div class="field">
+
+            <label for="riskProfile">
+              Risk profile
+            </label>
+
+            <select
+              id="riskProfile"
+              formControlName="riskProfile"
+            >
+
+              <option value="LOW">
+                Low
+              </option>
+
+              <option value="MEDIUM">
+                Medium
+              </option>
+
+              <option value="HIGH">
+                High
+              </option>
+
+            </select>
+
+          </div>
+
+          <!-- VALIDATION ERROR -->
+
+          <div
+            class="form-error"
+            *ngIf="loanForm.invalid && loanForm.touched"
+          >
+            Please enter valid values in all required fields.
+          </div>
+
+          <!-- SUBMIT -->
+
+          <button
+            type="submit"
+            class="primary-button"
+            [disabled]="loading()"
+          >
+
+            {{
+              loading()
+                ? 'Analysing your options...'
+                : 'Find My Loan'
+            }}
+
+          </button>
+
+        </form>
+
+      </section>
+
+      <!-- RIGHT SIDE: RESULTS -->
+
+      <section class="results">
+
+        <!-- INITIAL STATE -->
+
+        <div
+          class="card state-card"
+          *ngIf="!result() && !loading() && !errorMessage()"
+        >
+
+          <div class="state-icon">
+            ✦
+          </div>
+
+          <h3>
+            Your recommendation will appear here
+          </h3>
+
+          <p>
+            Complete your financial profile and we'll compare
+            available lending products and estimated repayment costs.
+          </p>
+
+        </div>
+
+        <!-- LOADING -->
+
+        <div
+          class="card state-card"
+          *ngIf="loading()"
+        >
+
+          <div class="spinner"></div>
+
+          <h3>
+            Analysing your profile
+          </h3>
+
+          <p>
+            Checking eligibility, calculating repayment and
+            preparing your AI explanation.
+          </p>
+
+        </div>
+
+        <!-- API ERROR -->
+
+        <div
+          class="card error-card"
+          *ngIf="errorMessage()"
+        >
+
+          <strong>
+            Unable to generate recommendation
+          </strong>
+
+          <p>
+            {{ errorMessage() }}
+          </p>
+
+        </div>
+
+        <!-- NO ELIGIBLE PRODUCT -->
+
+        <div
+          class="card state-card"
+          *ngIf="result() && !result()!.eligible"
+        >
+
+          <div class="warning-icon">
+            !
+          </div>
+
+          <h3>
+            No suitable product found
+          </h3>
+
+          <p>
+            {{ result()?.message }}
+          </p>
+
+          <div class="disclaimer">
+            {{ result()?.disclaimer }}
+          </div>
+
+        </div>
+
+        <!-- SUCCESS -->
+
+        <ng-container *ngIf="result()?.eligible">
+
+          <!-- RECOMMENDED PRODUCT -->
+
+          <div class="card recommendation">
+
+            <div class="recommendation-header">
+
+              <div>
+
+                <span class="recommend-label">
+                  RECOMMENDED FOR YOU
+                </span>
+
+                <h2>
+                  {{ result()?.recommendedProduct?.name }}
+                </h2>
+
+              </div>
+
+              <div class="rate">
+
+                <strong>
+                  {{ result()?.recommendedProduct?.annualRate }}%
+                </strong>
+
+                <span>
+                  per annum
+                </span>
+
+              </div>
+
+            </div>
+
+            <!-- CALCULATIONS -->
+
+            <div class="metrics">
+
+              <div class="metric highlight">
+
+                <span>
+                  MONTHLY EMI
+                </span>
+
+                <strong>
+                  {{
+                    result()?.calculation?.emi
+                      | currency:'INR':'symbol':'1.0-0'
+                  }}
+                </strong>
+
+              </div>
+
+              <div class="metric">
+
+                <span>
+                  TOTAL INTEREST
+                </span>
+
+                <strong>
+                  {{
+                    result()?.calculation?.totalInterest
+                      | currency:'INR':'symbol':'1.0-0'
+                  }}
+                </strong>
+
+              </div>
+
+              <div class="metric">
+
+                <span>
+                  TOTAL REPAYMENT
+                </span>
+
+                <strong>
+                  {{
+                    result()?.calculation?.totalRepayment
+                      | currency:'INR':'symbol':'1.0-0'
+                  }}
+                </strong>
+
+              </div>
+
+              <div class="metric">
+
+                <span>
+                  TENURE
+                </span>
+
+                <strong>
+                  {{ loanForm.controls.preferredTenure.value }}
+                  months
+                </strong>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- AI ADVISOR -->
+
+          <div class="card advisor">
+
+            <div class="advisor-header">
+
+              <div class="ai-badge">
+                AI
+              </div>
+
+              <div>
+
+                <h3>
+                  Advisor insight
+                </h3>
+
+                <span>
+                  Grounded AI explanation
+                </span>
+
+              </div>
+
+            </div>
+
+            <div class="advisor-text">
+              {{ result()?.advisorMessage }}
+            </div>
+
+          </div>
+
+          <!-- RESPONSIBLE AI DISCLAIMER -->
+
+          <div class="disclaimer">
+
+            <strong>
+              Important:
+            </strong>
+
+            {{ result()?.disclaimer }}
+
+          </div>
+
+        </ng-container>
+
+      </section>
+
+    </div>
+
+  </main>
+
+</div>
